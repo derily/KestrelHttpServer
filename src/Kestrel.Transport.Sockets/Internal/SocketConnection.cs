@@ -56,8 +56,13 @@ namespace Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.Internal
 
             ConnectionClosed = _connectionClosedTokenSource.Token;
 
-            _receiver = new SocketReceiver(_socket, scheduler);
-            _sender = new SocketSender(_socket, scheduler);
+            // On *nix platforms, Sockets already dispatches to the ThreadPool.
+            // Yes, the IOQueues are still used for the PipeSchedulers. This is intentional.
+            // https://github.com/aspnet/KestrelHttpServer/issues/2573
+            var awaiterScheduler = IsWindows ? _scheduler : PipeScheduler.Inline;
+
+            _receiver = new SocketReceiver(_socket, awaiterScheduler);
+            _sender = new SocketSender(_socket, awaiterScheduler);
         }
 
         public override MemoryPool<byte> MemoryPool { get; }

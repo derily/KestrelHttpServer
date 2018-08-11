@@ -13,16 +13,16 @@ namespace Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.Internal
         {
         }
 
-        public SocketAwaitable WaitForDataAsync()
+        public SocketAwaitableEventArgs WaitForDataAsync()
         {
-            _eventArgs.SetBuffer(Array.Empty<byte>(), 0, 0);
+            _awaitableEventArgs.SetBuffer(Array.Empty<byte>(), 0, 0);
 
-            if (!_socket.ReceiveAsync(_eventArgs))
+            if (!_socket.ReceiveAsync(_awaitableEventArgs))
             {
-                _awaitable.Complete(_eventArgs.BytesTransferred, _eventArgs.SocketError);
+                _awaitableEventArgs.Complete();
             }
 
-            return _awaitable;
+            return _awaitableEventArgs;
         }
 
         public SocketAwaitableEventArgs ReceiveAsync(Memory<byte> buffer)
