@@ -19,7 +19,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
-using Microsoft.AspNetCore.Server.Kestrel.Core.Internal;
+using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Infrastructure;
 using Microsoft.AspNetCore.Testing;
 using Microsoft.AspNetCore.Testing.xunit;
 using Microsoft.Extensions.Logging;
@@ -707,10 +707,9 @@ namespace Microsoft.AspNetCore.Server.Kestrel.FunctionalTests
                                                                "Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets")))
                 .Returns(mockLogger.Object);
 
-            var mockKestrelTrace = new Mock<KestrelTrace>(Logger) { CallBase = true };
-            var testContext = new TestServiceContext(mockLoggerFactory.Object)
+            var mockKestrelTrace = new Mock<IKestrelTrace>();
+            var testContext = new TestServiceContext(mockLoggerFactory.Object, mockKestrelTrace.Object)
             {
-                Log = mockKestrelTrace.Object,
                 ServerOptions =
                 {
                     Limits =
@@ -765,11 +764,8 @@ namespace Microsoft.AspNetCore.Server.Kestrel.FunctionalTests
             var readTcs = new TaskCompletionSource<object>(TaskCreationOptions.RunContinuationsAsynchronously);
             var appStartedTcs = new TaskCompletionSource<object>(TaskCreationOptions.RunContinuationsAsynchronously);
 
-            var mockKestrelTrace = new Mock<KestrelTrace>(Logger) { CallBase = true };
-            var testContext = new TestServiceContext()
-            {
-                Log = mockKestrelTrace.Object,
-            };
+            var mockKestrelTrace = new Mock<IKestrelTrace>();
+            var testContext = new TestServiceContext(LoggerFactory, mockKestrelTrace.Object);
 
             var scratchBuffer = new byte[4096];
 
