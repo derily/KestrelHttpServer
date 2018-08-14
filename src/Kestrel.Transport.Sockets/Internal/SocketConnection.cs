@@ -56,13 +56,8 @@ namespace Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.Internal
 
             ConnectionClosed = _connectionClosedTokenSource.Token;
 
-            // On *nix platforms, Sockets already dispatches to the ThreadPool.
-            // Yes, the IOQueues are still used for the PipeSchedulers. This is intentional.
-            // https://github.com/aspnet/KestrelHttpServer/issues/2573
-            var awaiterScheduler = IsWindows ? _scheduler : PipeScheduler.Inline;
-
-            _receiver = new SocketReceiver(_socket, awaiterScheduler);
-            _sender = new SocketSender(_socket, awaiterScheduler);
+            _receiver = new SocketReceiver(_socket, scheduler);
+            _sender = new SocketSender(_socket, scheduler);
         }
 
         public override MemoryPool<byte> MemoryPool { get; }
@@ -164,14 +159,18 @@ namespace Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.Internal
         {
             while (true)
             {
+                _trace.LogDebug("Waiting for data");
                 // Wait for data before allocating a buffer.
-                await _receiver.WaitForDataAsync();
+                var waitedBytes = await _receiver.WaitForDataAsync();
+                _trace.LogDebug($"Waited for {waitedBytes} bytes of data");
 
                 // Ensure we have some reasonable amount of buffer space
                 var buffer = Input.GetMemory(MinAllocBufferSize);
 
+                _trace.LogDebug($"Receiving data with a buffer at {buffer.GetArray().Offset} with count {buffer.GetArray().Count}");
                 var bytesReceived = await _receiver.ReceiveAsync(buffer);
 
+                _trace.LogDebug($"Received {bytesReceived} bytes of data");
                 if (bytesReceived == 0)
                 {
                     // FIN
