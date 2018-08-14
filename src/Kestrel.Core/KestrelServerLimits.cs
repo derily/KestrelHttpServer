@@ -38,6 +38,7 @@ namespace Microsoft.AspNetCore.Server.Kestrel.Core
         // Unlimited connections are allowed by default.
         private long? _maxConcurrentConnections = null;
         private long? _maxConcurrentUpgradedConnections = null;
+        private int _maxStreamsPerConnection = 100;
 
         /// <summary>
         /// Gets or sets the maximum size of the response buffer before write
@@ -248,6 +249,25 @@ namespace Microsoft.AspNetCore.Server.Kestrel.Core
                     throw new ArgumentOutOfRangeException(nameof(value), CoreStrings.NonNegativeNumberOrNullRequired);
                 }
                 _maxConcurrentUpgradedConnections = value;
+            }
+        }
+
+        /// <summary>
+        /// Limits the number of concurrent request streams per HTTP/2 connection. Excess streams will be refused.
+        /// <para>
+        /// Defaults to 100
+        /// </para>
+        /// </summary>
+        public int MaxStreamsPerConnection
+        {
+            get => _maxStreamsPerConnection;
+            set
+            {
+                if (value < 0)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(value), value, CoreStrings.NonNegativeNumberOrNullRequired);
+                }
+                _maxStreamsPerConnection = value;
             }
         }
 
