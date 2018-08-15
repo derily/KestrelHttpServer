@@ -322,13 +322,13 @@ namespace Microsoft.AspNetCore.Server.Kestrel.Core.Tests
 
             _connectionContext = new Http2ConnectionContext
             {
+                ConnectionContext = Mock.Of<ConnectionContext>(),
                 ConnectionFeatures = new FeatureCollection(),
                 ServiceContext = new TestServiceContext()
                 {
                     Log = mockKestrelTrace.Object
                 },
                 MemoryPool = _memoryPool,
-                Application = _pair.Application,
                 Transport = _pair.Transport
             };
 
