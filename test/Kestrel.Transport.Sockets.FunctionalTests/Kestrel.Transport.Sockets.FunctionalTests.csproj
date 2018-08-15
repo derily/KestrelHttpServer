@@ -12,7 +12,6 @@
   <ItemGroup>
     <Compile Include="..\Kestrel.Transport.FunctionalTests\**\*.cs" />
     <Compile Include="..\shared\*.cs" LinkBase="shared" />
-    <Compile Include="..\shared\FunctionalTestHelpers\*.cs" LinkBase="shared\FunctionalTestHelpers" />
     <Compile Include="..\shared\TransportTestHelpers\*.cs" LinkBase="shared\TransportTestHelpers" />
     <Content Include="..\shared\TestCertificates\*.pfx" LinkBase="shared\TestCertificates" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
@@ -25,8 +24,8 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="$(MicrosoftAspNetCoreHttpAbstractionsPackageVersion)" />
-    <PackageReference Include="Microsoft.AspNetCore.Testing" Version="$(MicrosoftAspNetCoreTestingPackageVersion)" />
     <PackageReference Include="Microsoft.Extensions.Logging.Testing" Version="$(MicrosoftExtensionsLoggingTestingPackageVersion)" />
+    <PackageReference Include="Microsoft.AspNetCore.Testing" Version="$(MicrosoftAspNetCoreTestingPackageVersion)" />
     <PackageReference Include="Microsoft.Internal.AspNetCore.H2Spec.All" Version="$(MicrosoftInternalAspNetCoreH2SpecAllPackageVersion)" />
     <PackageReference Include="Newtonsoft.Json" Version="$(NewtonsoftJsonPackageVersion)" />
     <PackageReference Include="System.Net.Http.WinHttpHandler" Version="$(SystemNetHttpWinHttpHandlerPackageVersion)" />
